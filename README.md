@@ -1,3 +1,3 @@
 # SICP
 
-This repository contains my solutions to problems and exercises as I work through the book (and equivalent MIT course) on the Structure and Interpretation of Computer Programs. The book and lectures are both taught in Scheme, a dialect of LISP.
+This repository contains my solutions to problems and exercises as I work through the book (and equivalent MIT course) on the Structure and Interpretation of Computer Programs. The book and lectures are both taught in Scheme, a dialect of LISP. You may occasionally see some bits and bobs of other languages in the repository, but those will only be common in the early parts of the repo, as I was experimenting with ideas in languages I was more comfortable with before implementing them in Scheme. The later parts of the repo are pretty much all in Scheme.
