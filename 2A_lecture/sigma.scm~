@@ -1,0 +1,11 @@
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+	 (sum (next a) b))))
+
+(define (square a)
+  (* a a))
+
+
+(sum (square) 1 (1+) 4) 

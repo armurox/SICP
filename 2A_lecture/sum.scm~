@@ -1,0 +1,15 @@
+(define (sum a b)
+  (if (> a b)
+      0
+      (+ a (sum (1+ a) b))))
+(define (square a)
+  (* a a))
+
+(define (sum_s a b)
+  (if (> a b)
+      0
+      (+ (square a) (sum_s (1+ a) b ))))
+
+
+(sum 1 4)
+(sum_s 1 5)
