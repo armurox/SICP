@@ -1,0 +1,8 @@
+(define (average x y) (/ (+ x y) 2))
+(define (abs x) (if (< x 0) (- x)
+		    x))
+(define (sqrt x g) (if (< (abs (- g (average g (/ x g)))) 0.000000000000001) g
+		       (sqrt x
+			     (average g (/ x g)))))
+
+(sqrt 4 1)

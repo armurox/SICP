@@ -1,0 +1,9 @@
+(define (average x y) (/
+		       (+ x y) 2))
+(define (abs x) (if (< x 0) (-x)
+		    x))
+
+
+(define (sqrt x) (
+		  (define (good-enough? guess) (if (< (abs (- (average guess (/ x guess)) guess)) 0.001) (
+		  ))

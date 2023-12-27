@@ -1,0 +1,6 @@
+(define (abs x)
+  (COND ((< x 0) (- x))
+	((= x 0) 0)
+	(> x 0) (x)))
+(abs -2)
+(abs 0)
