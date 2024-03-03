@@ -293,14 +293,52 @@
 ;; use, given a velocity, in order to reach a given height (receiver) at a 
 ;; given distance
 
+;; Integration equation to compute time given equation
+(define integrate-time
+  (lambda (x0 y0 u0 v0 dt g m beta t)
+    (if (< y0 0)
+	t
+	(integrate-time (+ x0 (* u0 dt))
+		   (+ y0 (* v0 dt))
+		   (+ u0 (- (/
+			(* (sqrt
+			    (+ (square u0) (square v0)))
+			   u0 beta dt)
+			m))) (+ v0 (* (- (+ (/
+			 (* (sqrt
+			     (+ (square u0) (square v0)))
+			    v0 beta)
+			 m)
+			g))
+				     dt))
+			dt g m beta (+ t dt))
+	)))
 
+(define compute-time
+  (lambda (elevation velocity angle)
+    (integrate-time 0 elevation (* velocity (cos angle)) (* velocity (sin angle)) 0.01 gravity mass beta 0)))
+
+(define compute-time-given-valid-trajectory
+  (lambda (elevation velocity desired-distance)
+    (define (try-angle e v angle)
+      (if (> angle (/ pi 2))
+	  0
+	  (if (> (travel-distance e v angle) desired-distance)
+	      (compute-time e v angle)
+	      (try-angle e v (+ angle 0.01)))))
+    (try-angle elevation velocity (- (/ pi 2)))))
+  
+  
 ;; a cather trying to throw someone out at second has to get it roughly 36 m
 ;; (or 120 ft) how quickly does the ball get there, if he throws at 55m/s,
 ;;  at 45m/s, at 35m/s?
-
+(compute-time-given-valid-trajectory 0 35 36) ; -> 1.27 s
 ;; try out some times for distances (30, 60, 90 m) or (100, 200, 300 ft) 
 ;; using 45m/s
-
+(compute-time-given-valid-trajectory 0 45 90) ; -> 3.75 s
+(compute-time-given-valid-trajectory 0 45 60) ; -> 1.87 s
+(compute-time-given-valid-trajectory 0 45 30) ; -> 0.79 s
+(compute-time-given-valid-trajectory 0 45 9000) ; -> 0 s
 ;; Problem 8
 
 ;; Problem 9
