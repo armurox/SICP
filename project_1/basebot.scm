@@ -340,5 +340,15 @@
 (compute-time-given-valid-trajectory 0 45 30) ; -> 0.79 s
 (compute-time-given-valid-trajectory 0 45 9000) ; -> 0 s
 ;; Problem 8
+(define travel-distance-with-bounce
+  (lambda (elevation velocity angle num_bounces)
+    (define (helper-travel-distance e v a n d)
+      (if (= n 0)
+	  d
+	  (helper-travel-distance 0 (/ v 2) a (- n 1) (+ d (travel-distance e v a)))))
+    (helper-travel-distance elevation velocity angle (+ num_bounces 1) 0)))
 
+(travel-distance-with-bounce 0 45 (/ pi 4) 4) ; -> 145.04 meters
+(travel-distance-with-bounce 0 45 (/ pi 4) 0) ; -> 91.69 meters
+  
 ;; Problem 9
