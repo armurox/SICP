@@ -377,8 +377,7 @@
     (define (helper-travel-distance e v a n d t)
       (if (= n 0)
 	  d
-	  (helper-travel-distance 0 (integrate-velocity d e (* v (cos a)) (* v (sin a)) 0.01 gravity mass beta (+ t (compute-time e v a))) a (- n 1) (+ d (travel-distance e v a)) (+ t (compute-time e v a)))))
+	  (helper-travel-distance 0 (integrate-velocity d e (* v (cos a)) (* v (sin a)) 0.01 gravity mass beta t) a (- n 1) (+ d (travel-distance e v a)) (+ t (compute-time e v a)))))
     (helper-travel-distance elevation velocity angle (+ num_bounces 1) 0 0)))
-
-(adjusted-travel-distance-with-bounce 0 45 (/ pi 4) 4) ; -> 124.88 meters
+(adjusted-travel-distance-with-bounce 0 45 (/ pi 4) 4) ; -> 107.67 meters
 (adjusted-travel-distance-with-bounce 0 45 (/ pi 4) 0) ; -> 91.69 meters
