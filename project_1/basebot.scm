@@ -352,3 +352,33 @@
 (travel-distance-with-bounce 0 45 (/ pi 4) 0) ; -> 91.69 meters
   
 ;; Problem 9
+(define integrate-velocity
+  (lambda (x0 y0 u0 v0 dt g m beta t)
+    (if (< y0 0)
+	(sqrt (+ (square u0) (square v0)))
+	(integrate-time (+ x0 (* u0 dt))
+		   (+ y0 (* v0 dt))
+		   (+ u0 (- (/
+			(* (sqrt
+			    (+ (square u0) (square v0)))
+			   u0 beta dt)
+			m))) (+ v0 (* (- (+ (/
+			 (* (sqrt
+			     (+ (square u0) (square v0)))
+			    v0 beta)
+			 m)
+			g))
+				     dt))
+			dt g m beta (+ t dt))
+	)))
+
+(define adjusted-travel-distance-with-bounce
+  (lambda (elevation velocity angle num_bounces)
+    (define (helper-travel-distance e v a n d t)
+      (if (= n 0)
+	  d
+	  (helper-travel-distance 0 (integrate-velocity d e (* v (cos a)) (* v (sin a)) 0.01 gravity mass beta (+ t (compute-time e v a))) a (- n 1) (+ d (travel-distance e v a)) (+ t (compute-time e v a)))))
+    (helper-travel-distance elevation velocity angle (+ num_bounces 1) 0 0)))
+
+(adjusted-travel-distance-with-bounce 0 45 (/ pi 4) 4) ; -> 124.88 meters
+(adjusted-travel-distance-with-bounce 0 45 (/ pi 4) 0) ; -> 91.69 meters
