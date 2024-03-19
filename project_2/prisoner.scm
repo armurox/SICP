@@ -125,9 +125,57 @@
 (extract-entry d-play *game-association-list*) ; -> (("c" "c") (3 3))
 
 ;; Problem 2
-(play-loop NASTY PATSY)
-(play-loop NASTY NASTY)
-(play-loop PATSY PATSY)
+
+;; I wrote a helper function to generate all possible combination of the loop, to make matrix generation easier
+(define (generate-combination count1 count2)
+  (if (null? (cdr count2))
+      (if (null? (cdr count1))
+	  (begin
+	    (display "Strategy 1: ")
+	    (display (car count1))
+	    (newline)
+	    (display "Strategy 2: ")
+	    (display (car count2))
+	  (play-loop (car count1) (car count2)))
+	  (begin
+	    (display "Strategy 1: ")
+	    (display (car count1))
+	    (newline)
+	    (display "Strategy 2: ")
+	    (display (car count2))
+	    (play-loop (car count1) (car count2))
+	    (generate-combination (cdr count1) (cdr count1)))
+	  )
+      (begin
+	(display "Strategy 1: ")
+	    (display (car count1))
+	    (newline)
+	    (display "Strategy 2: ")
+	    (display (car count2))
+	(play-loop (car count1) (car count2))
+	(generate-combination count1 (cdr count2))
+	)
+      )
+  )
+
+;; Generate all the combinations
+(generate-combination (list NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC) (list NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC))
+
+#|
+ ----------------------------------------------------------------------------
+|             | NASTY     | PATSY     | EGALITARIAN | EYE-FOR-EYE | SPASTIC   | 
+| NASTY       | 1   1     | 5   0     | 1.04 0.99   | 1.04 0.99   | 3.12 0.47 |
+| PATSY       | 0   5     | 3   3     | 3    3      | 3    3      | 1.75 3.83 |
+| EGALITARIAN | 0.99 1.04 | 3   3     | 3    3      | 3    3      | 2.41 1.98 |
+| EYE-FOR-EYE | 0.99 1.04 | 3   3     | 3    3      | 3    3      | 2.32 2.36 |
+| SPASTIC     | 0.48 3.08 | 4.12 1.32 | 2.93 2.01   | 2.41 2.41   | 2.12 2.38 |
+ ----------------------------------------------------------------------------
+
+Some key things to notice:
+- EYE-FOR-EYE with Egalitarian and Patsy is always cooperating. It also matches with Spastic quite often, since it closely follows its pattern
+- Egalitarian with itself also always cooperates, as the average is always towards cooperation
+- Nasty always beats Patsy with full score but tends to have a lower score when playing against others (due to them reacting to it) 
+|#
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; code to use in 3 player game
