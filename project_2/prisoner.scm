@@ -176,6 +176,42 @@ Some key things to notice:
 - Egalitarian with itself also always cooperates, as the average is always towards cooperation
 - Nasty always beats Patsy with full score but tends to have a lower score when playing against others (due to them reacting to it) 
 |#
+
+;; Problem 3
+;; Iterative version of Egalitarian
+#|
+(define (Egalitarian my-history other-history)
+  (define (majority-loop cs ds hist)
+    (cond ((empty-history? hist) (if (> ds cs) “d” “c”))
+	  ((string=? (most-recent-play hist) “c”)
+	   (majority-loop (+ 1 cs) ds (rest-of-plays hist)))
+	  (else
+	   (majority-loop cs (+ 1 ds) (rest-of-plays hist)))))
+  (majority-loop 0 0 other-history))
+
+
+While the iterative version of the code provided is better space complexity wise (it is O(1)), it's time complexity is the same as the base Egalitarian: O(n). It might be slightly fatser because it doesn't do it twice i.e. 2N vs N, but for large N, that doesn't matter too much, especially on the scales we are comparing at. 
+|#
+
+;; Problem 4 and 5
+(define (EYE-FOR-N-EYE n)
+  (lambda(my-history other-history)
+    (define (count i other-hist)
+      (if (empty-history? other-hist)
+	  "c"
+	  (if (= i n)
+	      "d"
+	      (if (string=? (most-recent-play other-hist) "c")
+		  "c"
+		  (count (+ i 1) (rest-of-plays other-hist))))))
+    (count 0 other-history)))
+
+(generate-combination (list (EYE-FOR-N-EYE 2)) (list NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC))
+(generate-combination (list (EYE-FOR-N-EYE 3)) (list NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC))
+#|
+The two strategies generally perform the same as eye-for-eye, except against spastic and nasty, where in the first case, since they cooperate more on average, they tend to lose more against spastic, while in the nasty case, the larger n is, the more rounds its looking for before it starts to defect against nasty, hence the cooperate command lasts longer.
+|#
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; code to use in 3 player game
