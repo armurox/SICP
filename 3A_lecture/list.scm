@@ -29,3 +29,27 @@
   (helper () (reverse () l)))
 
 (scale-list-1 10 1-to-4)
+
+(define (map func l)
+  (if (null? l)
+      ()
+      (cons (func (car l)) (map func (cdr l)))))
+
+(map (lambda(i) (* 10 i)) 1-to-4)
+
+;; Alternatively
+(define (scale-list s l)
+  (map (lambda(i) (* s i)) l))
+
+(scale-list 10 1-to-4)
+
+(map square 1-to-4)
+
+(define (for-each func l)
+  (if (null? l)
+      "done"
+      (begin
+	(func (car l))
+	(for-each func (cdr l)))))
+
+(for-each display 1-to-4)x
