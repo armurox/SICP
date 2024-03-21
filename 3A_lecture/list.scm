@@ -52,4 +52,4 @@
 	(func (car l))
 	(for-each func (cdr l)))))
 
-(for-each display 1-to-4)x
+(for-each display 1-to-4)
