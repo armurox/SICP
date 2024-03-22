@@ -212,6 +212,29 @@ While the iterative version of the code provided is better space complexity wise
 The two strategies generally perform the same as eye-for-eye, except against spastic and nasty, where in the first case, since they cooperate more on average, they tend to lose more against spastic, while in the nasty case, the larger n is, the more rounds its looking for before it starts to defect against nasty, hence the cooperate command lasts longer.
 |#
 
+;; Problem 6
+(define (make-rotating-strategy strat0 strat1 freq0 freq1)
+  (lambda(my-history other-history)
+    (define (count-rounds hist count)
+      (if (empty-history? hist)
+	  count
+	  (count-rounds (cdr hist) (+ count 1))))
+    (define (is-even? num)
+      (= (remainder num 2) 0))
+    (let ((num-rounds (count-rounds my-history 0)))
+    (if (is-even? (floor (/ num-rounds freq0))) 
+	(strat0 my-history other-history)
+	(strat1 my-history other-history)
+	))))
+
+(define rotating-strat-eye-and-egalitarian (make-rotating-strategy EYE-FOR-EYE EGALITARIAN 2 5))
+
+(generate-combination (list rotating-strat-eye-and-egalitarian)
+		      (list rotating-strat-eye-and-egalitarian NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC))
+
+#|
+The newly generated strategy does worse than a pure eye-for-eye against nasty, but better than pure egalitarian, due the partway weightage on immediately responding to nasty. Against spastic, due to the weightage with egalitarian, it fluctuates more than eye-for-eye. Against the others, it cooperates, due to the nature of egalitarian
+|#
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; code to use in 3 player game

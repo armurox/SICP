@@ -50,7 +50,7 @@
     (lambda (x) ( / (- (func (+ x df)) (func x)) df)))
   (func_f (lambda (y)(- y (/ (f y) ((deriv f) y)))) guess))
 
-;; Square root with new rhapson method
+;; Square root with newton-rhapson method
 (define (sqrt_5 x)
   (define (square y) (* y y))
   (newton (lambda(y) (- (square y) x)) 1))
