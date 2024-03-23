@@ -231,9 +231,32 @@ The two strategies generally perform the same as eye-for-eye, except against spa
 
 (generate-combination (list rotating-strat-eye-and-egalitarian)
 		      (list rotating-strat-eye-and-egalitarian NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC))
-
 #|
 The newly generated strategy does worse than a pure eye-for-eye against nasty, but better than pure egalitarian, due the partway weightage on immediately responding to nasty. Against spastic, due to the weightage with egalitarian, it fluctuates more than eye-for-eye. Against the others, it cooperates, due to the nature of egalitarian
+|#
+
+;; Problem 7
+(define (make-higher-order-spastic strats)
+  (lambda (my-history other-history)
+    (define (len li count)
+      (if (null? li)
+	  count
+	  (len (cdr li) (+ count 1))))
+    (define (loop-through s count)
+      (let ((curr-strat-loc (remainder (len my-history 0) (len strats 0))))
+	(if (= count curr-strat-loc)
+	    ((car s) my-history other-history)
+	    (loop-through (cdr s) (+ count 1)))))
+    (loop-through strats 0)))
+
+(play-loop (make-higher-order-spastic (list NASTY PATSY EGALITARIAN EYE-FOR-EYE)) NASTY)
+(generate-combination
+ (list (make-higher-order-spastic (list NASTY PATSY EGALITARIAN EYE-FOR-EYE)))
+ (list (make-higher-order-spastic (list NASTY PATSY EGALITARIAN EYE-FOR-EYE))
+       NASTY PATSY EGALITARIAN EYE-FOR-EYE SPASTIC))
+      
+#|
+The newly generated strategy does quite badly against nasty, due to the constant usage of patsy reappearing every 4 rounds, but it does do better against patsy than pure patsy, due to the reappearance of nasty. It also does better against egalitarian, due to the fact it can insert a nasty every 4 rounds, but not enough to affect the average. It does the same as any against eye=to-eye, as eye-to-eye always responds to it (in that sense, the name is good, it does behave a lot like a higher-order-spastic function, constantly switching between strategies)
 |#
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
