@@ -258,6 +258,25 @@ The newly generated strategy does worse than a pure eye-for-eye against nasty, b
 #|
 The newly generated strategy does quite badly against nasty, due to the constant usage of patsy reappearing every 4 rounds, but it does do better against patsy than pure patsy, due to the reappearance of nasty. It also does better against egalitarian, due to the fact it can insert a nasty every 4 rounds, but not enough to affect the average. It does the same as any against eye=to-eye, as eye-to-eye always responds to it (in that sense, the name is good, it does behave a lot like a higher-order-spastic function, constantly switching between strategies)
 |#
+
+;; Problem 8
+(define (gentle strat gentleness-factor)
+  (lambda (my-history other-history)
+    (if (string=? (strat my-history other-history) "d")
+	(if (< (random 1.0) gentleness-factor)
+	    "c"
+	    "d")
+	"c")))
+
+(define slightly-gentle-NASTY (gentle NASTY 0.1))
+(define slightly-gentle-EYE-FOR-EYE (gentle EYE-FOR-EYE 0.1))
+
+(generate-combination (list slightly-gentle-NASTY slightly-gentle-EYE-FOR-EYE)
+		      (list NASTY PATSY EYE-FOR-EYE EGALITARIAN SPASTIC))
+
+#|
+Here, the result for this strategy also behave as expected. For example, slightly-gentle-NASTY does worse against NASTY, due to its small schance of cooperating, but still does pretty well against PATSY, due to the low chance of defections becomes cooperations.
+|#
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; code to use in 3 player game
