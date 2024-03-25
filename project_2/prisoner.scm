@@ -282,16 +282,92 @@ Here, the result for this strategy also behave as expected. For example, slightl
 ;; code to use in 3 player game
 ;;	    
 
-;(define *game-association-list*
-;  (list (list (list "c" "c" "c") (list 4 4 4))
-;        (list (list "c" "c" "d") (list 2 2 5))
-;        (list (list "c" "d" "c") (list 2 5 2))
-;        (list (list "d" "c" "c") (list 5 2 2))
-;        (list (list "c" "d" "d") (list 0 3 3))
-;        (list (list "d" "c" "d") (list 3 0 3))
-;        (list (list "d" "d" "c") (list 3 3 0))
-;        (list (list "d" "d" "d") (list 1 1 1))))
+(define *game-association-list*
+  (list (list (list "c" "c" "c") (list 4 4 4))
+        (list (list "c" "c" "d") (list 2 2 5))
+        (list (list "c" "d" "c") (list 2 5 2))
+        (list (list "d" "c" "c") (list 5 2 2))
+        (list (list "c" "d" "d") (list 0 3 3))
+        (list (list "d" "c" "d") (list 3 0 3))
+        (list (list "d" "d" "c") (list 3 3 0))
+        (list (list "d" "d" "d") (list 1 1 1))))
 
+;; Problem 9
+(define (play-loop-3 strat0 strat1 strat2)
+  (define (play-loop-iter strat0 strat1 strat2 count history0 history1 history2 limit)
+    (cond ((= count limit) (print-out-results-3 history0 history1 history2 limit))
+	  (else (let ((result0 (strat0 history0 history1 history2))
+		      (result1 (strat1 history1 history0 history2))
+		      (result2 (strat2 history2 history0 history1)))
+		  (play-loop-iter strat0 strat1 strat2 (+ count 1)
+				  (extend-history result0 history0)
+				  (extend-history result1 history1)
+				  (extend-history result2 history2)
+				  limit)))))
+  (play-loop-iter strat0 strat1 strat2 0 the-empty-history the-empty-history the-empty-history
+		  (+ 90 (random 21))))
+
+(define (print-out-results-3 history0 history1 history2 number-of-games)
+  (let ((scores (get-scores-3 history0 history1 history2)))
+    (newline)
+    (display "Player 1 Score:  ")
+    (display (* 1.0 (/ (car scores) number-of-games)))
+    (newline)
+    (display "Player 2 Score:  ")
+    (display (* 1.0 (/ (cadr scores) number-of-games)))
+    (newline)
+    (display "Player 3 Score: ")
+    (display (* 1.0 (/ (caddr scores) number-of-games)))
+    (newline)))
+
+(define (get-scores-3 history0 history1 history2)
+  (define (get-scores-helper history0 history1 history2 score0 score1 score2)
+    (cond ((empty-history? history0)
+	   (list score0 score1 score2))
+	  (else (let ((game (make-play (most-recent-play history0)
+				       (most-recent-play history1)
+				       (most-recent-play history2))))
+		  (get-scores-helper (rest-of-plays history0)
+				     (rest-of-plays history1)
+				     (rest-of-plays history2)
+				     (+ (get-player-points 0 game) score0)
+				     (+ (get-player-points 1 game) score1)
+				     (+ (get-player-points 2 game) score2))))))
+  (get-scores-helper history0 history1 history2 0 0 0))
+
+;; Problem 10
+(define (PATSY-3 history0 history1 history2)
+  "c")
+
+(define (NASTY-3 history0 history1 history2)
+  "d")
+
+(define (SPASTIC-3 history0 history1 history2)
+  (if (= (random 2) 0)
+      "c"
+      "d"))
+
+(define (tough-EYE-FOR-EYE history0 history1 history2)
+  (cond ((empty-history? history0) "c")
+	((or (string=? (most-recent-play history1) "d") (string=? (most-recent-play history2) "d")) "d")
+	(else
+	 "c")))
+
+(define (soft-EYE-FOR-EYE history0 history1 history2)
+  (cond ((empty-history? history0) "c")
+	((and (string=? (most-recent-play history1) "d") (string=? (most-recent-play history2) "d")) "d")
+	(else
+	 "c")))
+
+(play-loop-3 NASTY-3 SPASTIC-3 PATSY-3)
+(play-loop-3 tough-EYE-FOR-EYE NASTY-3 PATSY-3)
+(play-loop-3 soft-EYE-FOR-EYE NASTY-3 PATSY-3)
+(play-loop-3 tough-EYE-FOR-EYE NASTY-3 SPASTIC-3)
+(play-loop-3 soft-EYE-FOR-EYE NASTY-3 SPASTIC-3)
+
+#| Tough EYE-FOR-EYE does a lot better against nasty than the soft version, which behaves practically like patsy.
+Similarly when Spastic is present.
+|#
 
 ;; in expected-values: #f = don't care 
 ;;                      X = actual-value needs to be #f or X 
