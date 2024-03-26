@@ -368,7 +368,16 @@ Here, the result for this strategy also behave as expected. For example, slightl
 #| Tough EYE-FOR-EYE does a lot better against nasty than the soft version, which behaves practically like patsy.
 Similarly when Spastic is present.
 |#
+(define (make-combined-strategies strat0 strat1 combining)
+  (lambda(history0 history1 history2)
+    (let ((result0 (strat0 history0 history1))
+	  (result1 (strat1 history0 history2)))
+      (combining result0 result1))))
 
+(define alternate-tought-eye-for-eye
+  (make-combined-strategies EYE-FOR-EYE EYE-FOR-EYE (lambda(r1 r2) (if (or (string=? r1 "d") (string=? r2 "d")) "d" "c"))))
+
+(play-loop-3 alternate-tought-eye-for-eye NASTY-3 PATSY-3)
 ;; in expected-values: #f = don't care 
 ;;                      X = actual-value needs to be #f or X 
 ;(define (test-entry expected-values actual-values) 
