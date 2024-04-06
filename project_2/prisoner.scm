@@ -275,7 +275,7 @@ The newly generated strategy does quite badly against nasty, due to the constant
 		      (list NASTY PATSY EYE-FOR-EYE EGALITARIAN SPASTIC))
 
 #|
-Here, the result for this strategy also behave as expected. For example, slightly-gentle-NASTY does worse against NASTY, due to its small schance of cooperating, but still does pretty well against PATSY, due to the low chance of defections becomes cooperations.
+Here, the result for this strategy also behave as expected. For example, slightly-gentle-NASTY does worse against NASTY, due to its small schance of cooperating, but still does pretty well against PATSY, due to the low chance of defections beating cooperations.
 |#
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -368,6 +368,7 @@ Here, the result for this strategy also behave as expected. For example, slightl
 #| Tough EYE-FOR-EYE does a lot better against nasty than the soft version, which behaves practically like patsy.
 Similarly when Spastic is present.
 |#
+;; Problem 11
 (define (make-combined-strategies strat0 strat1 combining)
   (lambda(history0 history1 history2)
     (let ((result0 (strat0 history0 history1))
@@ -378,6 +379,98 @@ Similarly when Spastic is present.
   (make-combined-strategies EYE-FOR-EYE EYE-FOR-EYE (lambda(r1 r2) (if (or (string=? r1 "d") (string=? r2 "d")) "d" "c"))))
 
 (play-loop-3 alternate-tought-eye-for-eye NASTY-3 PATSY-3)
+
+
+;; Problem 12
+
+;; Function that constructs a data structure used to determine how the first player behaved when both other players cooperated
+(define (make-cooperate-cooperate hist0 hist1 hist2)
+  (define (compute-cooperations num-c num-d hist-0 hist-1 hist-2)
+    (cond ((empty-history? (rest-of-plays hist-1)) (list num-c num-d (+ num-c num-d)))
+	  ((and (and (string=? (cadr hist-1) "c") (string=? (cadr hist-2) "c")) (string=? (car hist-0) "c"))
+	   (compute-cooperations (1+ num-c) num-d (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))
+	  ((and (and (string=? (cadr hist-1) "c") (string=? (cadr hist-2) "c")) (string=? (car hist-0) "d"))
+	   (compute-cooperations num-c (1+ num-d) (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))
+	  (else
+	   (compute-cooperations num-c num-d (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))))
+ (compute-cooperations 0 0 hist0 hist1 hist2))
+
+;; Test Case
+(make-cooperate-cooperate (list "c" "c" "d" "d" "c") (list "c" "c" "c" "c" "d") (list "d" "c" "c" "c" "d"))
+
+;; Functions that constructs a data structure used to determine how the first player behaved when both other players cooperated
+(define (make-defect-defect hist0 hist1 hist2)
+  (define (compute-defections num-c num-d hist-0 hist-1 hist-2)
+    (cond ((empty-history? (rest-of-plays hist-1)) (list num-c num-d (+ num-c num-d)))
+	  ((and (and (string=? (cadr hist-1) "d") (string=? (cadr hist-2) "d")) (string=? (car hist-0) "c"))
+	   (compute-defections (1+ num-c) num-d (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))
+	  ((and (and (string=? (cadr hist-1) "d") (string=? (cadr hist-2) "d")) (string=? (car hist-0) "d"))
+	   (compute-defections num-c (1+ num-d) (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))
+	  (else
+	   (compute-defections num-c num-d (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))))
+  (compute-defections 0 0 hist0 hist1 hist2))
+
+;; Test Case
+(make-defect-defect (list "c" "c" "d" "d" "c") (list "d" "d" "d" "d" "d") (list "c" "d" "d" "d" "d"))
+
+;; Function that constructs a data structure used to determine how the first player behaved when the other players defected and cooperated respectively (regardless of order)
+
+(define (make-cooperate-defect hist0 hist1 hist2)
+  (define (compute-c-d num-c num-d hist-0 hist-1 hist-2)
+    (cond ((empty-history? (rest-of-plays hist-1)) (list num-c num-d (+ num-c num-d)))
+	  ((and (or (and (string=? (cadr hist-1) "c") (string=? (cadr hist-2) "d"))
+		    (and (string=? (cadr hist-1) "d") (string=? (cadr hist-2) "c"))) (string=? (car hist-0) "c"))
+	   (compute-c-d (1+ num-c) num-d (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))
+	  ((and (or (and (string=? (cadr hist-1) "c") (string=? (cadr hist-2) "d"))
+		    (and (string=? (cadr hist-1) "d") (string=? (cadr hist-2) "c"))) (string=? (car hist-0) "d"))
+	   (compute-c-d num-c (1+ num-d) (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))
+	  (else
+	   (compute-c-d num-c num-d (rest-of-plays hist-0) (rest-of-plays hist-1) (rest-of-plays hist-2)))))
+  (compute-c-d 0 0 hist0 hist1 hist2))
+
+;; Test Case
+(make-cooperate-defect (list "c" "c" "d" "d" "c") (list "d" "d" "d" "d" "d") (list "d" "c" "c" "c" "c"))
+
+;; Constructor for history summary which contains the complete info about how player 1 based on the other two players
+(define (make-history-summary hist0 hist1 hist2)
+  (list (make-cooperate-cooperate hist0 hist1 hist2) (make-cooperate-defect hist0 hist1 hist2)
+	(make-defect-defect hist0 hist1 hist2)))
+
+;; Test Case
+(define summary (make-history-summary
+(list "c" "c" "d" "d" "c" "d" "c" "c") ;hist-0
+(list "c" "c" "c" "d" "d" "c" "d" "c") ;hist-1
+(list "c" "c" "d" "d" "d" "c" "c" "c")))
+
+summary
+
+;; Selectors for the individual parts of the history summary
+(define cooperate-cooperate car)
+(define cooperate-defect cadr)
+(define defect-defect caddr)
+
+;; Test Cases
+(cooperate-cooperate summary) ;; -> (3 0 3)
+(cooperate-defect summary) ;; -> (1 1 2)
+(defect-defect summary) ;; -> (1 1 2)
+
+;; Problem 13
+(define (get-probability-c summary)
+  (let ((cc (cooperate-cooperate summary))
+	(cd (cooperate-defect summary))
+	(dd (defect-defect summary)))
+    (list (if (> (caddr cc) 0)
+	       (/ (car cc) (caddr cc))
+	       '())
+	  (if (> (caddr cd) 0)
+	       (/ (car cd) (caddr cd))
+	       '())
+	  (if (> (caddr dd) 0)
+	       (/ (car dd) (caddr dd))
+	       '())
+	  )))
+
+(get-probability-c summary)
 ;; in expected-values: #f = don't care 
 ;;                      X = actual-value needs to be #f or X 
 ;(define (test-entry expected-values actual-values) 
