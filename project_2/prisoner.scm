@@ -455,7 +455,7 @@ summary
 (defect-defect summary) ;; -> (1 1 2)
 
 ;; Problem 13
-(define (get-probability-c summary)
+(define (get-probability-of-c summary)
   (let ((cc (cooperate-cooperate summary))
 	(cd (cooperate-defect summary))
 	(dd (defect-defect summary)))
@@ -470,30 +470,65 @@ summary
 	       '())
 	  )))
 
-(get-probability-c summary)
+(get-probability-of-c summary)
+
+;; Problem 14
 ;; in expected-values: #f = don't care 
-;;                      X = actual-value needs to be #f or X 
-;(define (test-entry expected-values actual-values) 
-;   (cond ((null? expected-values) (null? actual-values)) 
-;         ((null? actual-values) #f) 
-;         ((or (not (car expected-values)) 
-;              (not (car actual-values)) 
-;              (= (car expected-values) (car actual-values))) 
-;          (test-entry (cdr expected-values) (cdr actual-values))) 
-;         (else #f))) 
-;
-;(define (is-he-a-fool? hist0 hist1 hist2) 
-;   (test-entry (list 1 1 1) 
-;               (get-probability-of-c 
-;                (make-history-summary hist0 hist1 hist2))))
-;
-;(define (could-he-be-a-fool? hist0 hist1 hist2)
-;  (test-entry (list 1 1 1)
-;              (map (lambda (elt) 
-;                      (cond ((null? elt) 1)
-;                            ((= elt 1) 1)  
-;                            (else 0)))
-;                   (get-probability-of-c (make-history-summary hist0 
-;                                                               hist1
-;                                                               hist2)))))
+;;                      X = actual-value needs to be #f or X
+
+(define (test-entry expected-values actual-values) 
+   (cond ((null? expected-values) (null? actual-values)) 
+         ((null? actual-values) #f) 
+         ((or (not (car expected-values)) 
+              (not (car actual-values)) 
+              (= (car expected-values) (car actual-values))) 
+          (test-entry (cdr expected-values) (cdr actual-values))) 
+         (else #f)))
+
+(define (is-he-a-fool? hist0 hist1 hist2) 
+   (test-entry (list 1 1 1) 
+               (get-probability-of-c 
+                (make-history-summary hist0 hist1 hist2))))
+
+(define (could-he-be-a-fool? hist0 hist1 hist2)
+  (test-entry (list 1 1 1)
+              (map (lambda (elt) 
+                      (cond ((null? elt) 1)
+                            ((= elt 1) 1)  
+                            (else 0)))
+                   (get-probability-of-c (make-history-summary hist0 
+                                                               hist1
+                                                               hist2)))))
+
+(define (is-he-soft? hist0 hist1 hist2)
+  (test-entry (list 1 1 0)
+	      (map (lambda (elt) 
+                      (cond ((null? elt) 1)
+                            ((= elt 1) 1)  
+                            (else 0)))
+	      (get-probability-of-c (make-history-summary hist0
+							  hist1
+							  hist2)))))
+
+;; Strategy that cooperates for the first 10 rounds, then defects if both other strategies are PATSY
+(define (dont-tolerate-fools hist0 hist1 hist2)
+  (define (count-rounds hist count)
+    (if (empty-history? hist)
+	count
+	(count-rounds (rest-of-plays hist) (+ count 1))))
+  (let ((num-rounds (count-rounds hist0 0)))
+    (if (> num-rounds 10)
+	(if (and (could-he-be-a-fool? hist1 hist0 hist2) (could-he-be-a-fool? hist2 hist1 hist0))
+	    "d"
+	    "c")
+	"c")))
+
+;; Test Case
+(play-loop-3 dont-tolerate-fools PATSY-3 PATSY-3)
+(play-loop-3 dont-tolerate-fools PATSY-3 soft-EYE-FOR-EYE)
+(play-loop-3 dont-tolerate-fools PATSY-3 tough-EYE-FOR-EYE)
+(play-loop-3 dont-tolerate-fools dont-tolerate-fools dont-tolerate-fools)
+#|
+The behaviour is as expected. The dont-tolerate-fools strategy does very well against PATSY, and otherwise behaves pretty much like patsy against all other strategies, other than soft-EYE-FOR-EYE, which can also be treated like patsy.PLaying against itself, it is equal, as they all defect and cooperate at the same time.
+|#
 
