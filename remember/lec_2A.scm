@@ -100,8 +100,9 @@
     (/ (- (f (+ x h)) (f x)) h)))
 
 (define (newton f guess)
+  (define df (deriv f))
   (fixed-point (lambda(x)
-		 (- x (/ (f x) ((deriv f) x))))
+		 (- x (/ (f x) (df x))))
 	       guess))
 
 (define (sqrt x)
