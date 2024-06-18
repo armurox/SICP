@@ -1,0 +1,19 @@
+(define (sum a b)
+  (define (sum-up ans count)
+    (if (> count b)
+	ans
+	(sum-up (+ ans count) (+ count 1))))
+  (sum-up 0 a)) ;; Iterative process
+
+(sum 6 5)
+
+(define (sum-int a b)
+  (if (> a b)
+      0
+      (+ a (sum-int (1+ a) b)))) ;; Recursive process
+
+(sum-int 1 5)
+
+;; Generalize
+(define (sum-int a b f)
+  (if (> a b)

@@ -1,0 +1,36 @@
+(define (sqrt-1 x)
+  (define (good-enough? g)
+    (< (abs (- (square g) x)) 0.0001))
+  (define (square a)
+    (* a a))
+  (define (abs a)
+    (if (< a 0)
+	(- a)
+	a))
+  (define (avg a b)
+    (/ (+ a b) 2))
+  (define (try guess)
+    (if (good-enough? guess)
+	guess
+	(try (avg guess (/ x guess)))))
+  (try 1))
+
+(sqrt-1 4)
+
+(define (average-damp f)
+  (define (avg a b)
+    (/ (+ a b) 2))
+  (lambda(x)
+    (avg x (f x))))
+
+(define (fixed-point f)
+  (define (try guess)
+    (if (< (abs (- guess (f guess))) 0.0001)
+	(f guess)
+	(try (f guess))))
+  (lambda(g)
+    (try g)))
+
+(define (sqrt-2 x)
+  (fixed-point (average-damp (lambda(g) (/ x g)))) 1)
+	

@@ -1,0 +1,18 @@
+(define (sqrt-1 x)
+  (define (good-enough? g)
+    (< (abs (- (square g) x)) 0.0001))
+  (define (square a)
+    (* a a))
+  (define (abs a)
+    (if (< a 0)
+	(- a)
+	a))
+  (define (avg a b)
+    (/ (+ a b) 2))
+  (define (try guess)
+    (if (good-enough? guess)
+	guess
+	(try (avg guess (/ x guess)))))
+  (try 1))
+
+(sqrt-1 4)

@@ -1,0 +1,76 @@
+(define (sum-square a b)
+  (define (square x)
+    (* x x))
+  (+ (square a) (square b)))
+
+(sum-square 3 4) ;; -> 25
+
+(define (+ a b)
+  (if (= b 0)
+      a
+      (+ (1+ a) (-1+ b))))
+
+(define (+ a b)
+  (if (= b 0)
+      a
+      (1+ (+ a (-1+ b)))))
+
+(+ 1 2)
+
+;; DRAW A CIRCLE
+
+(define (circle x y)
+  (define dt 0.0001)
+  (plot x y)
+  (circle (- x (* y dt))
+	  (+ y (* x dt))))
+
+(circle 1 2)
+
+
+;; Fibonacci sequence
+
+(define (fib n)
+  (cond ((= n 0) 0)
+	((= n 1) 1)
+	(else
+	 (+ (fib (- n 1)) (fib (- n 2)))))) ;; Recursive definition
+
+(fib 10)
+
+(define (fib-1 n)
+  (define (loop-until a b count)
+    (if (= count n)
+	a
+	(loop-until b (+ a b) (+ count 1))))
+  (loop-until 0 1 0)) ;; Iterative version
+
+(fib-1 5)
+
+;; Tower of hanoi
+
+;; Formula version
+(define (towers n)
+  (- (expt 2 n) 1))
+
+(towers 3)
+
+;; Recursive version
+(define (towers-1 n)
+  (if (= n 1)
+      1
+      (+ (* 2 (towers-1 (- n 1))) 1)))
+
+(towers-1 3)
+
+;; Iterative version
+(define (towers-2 n)
+  (define (loop-until b count)
+    (if (= count n)
+	b
+	(loop-until (+ (* 2 b) 1) (+ count 1))))
+  (loop-until 1 1))
+
+(towers-2 3)
+
+(fib 12)
