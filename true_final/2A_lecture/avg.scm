@@ -56,3 +56,25 @@
   (generic-sum a b (lambda(x) (/ 1 (* x (+ x 2)))) (lambda(x) (+ x 4))))
 
 (pi-sum 1 100)
+
+
+(define (recursive-generic-sum a b term next)
+  (if (> a b)
+      0
+      (+ (term a)
+	 (recursive-generic-sum (next a) b term next))))
+
+(define (recursive-sum-square a b)
+  (define (square a) (* a a))
+  (recursive-generic-sum a b square 1+))
+
+(recursive-sum-square 1 4) ;; -> 30
+
+(define (compute-num-ways num-steps)
+  (define (iter curr next count)
+    (if (= count num-steps)
+	curr
+	(iter next (+ curr next) (1+ count))))
+  (iter 1 1 0))
+
+(compute-num-ways 10) ;; DP Problem  
