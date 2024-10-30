@@ -78,3 +78,23 @@
   (iter 1 1 0))
 
 (compute-num-ways 10) ;; DP Problem  
+
+
+(define (fixed-point f g)
+  (define tolerance 0.0001)
+  (define (abs a)
+    (if (< a 0)
+	(- a)
+	a))
+  (define (close-enuf? old new)
+    (< (abs (- old new)) tolerance))
+  (define (iter old new)
+    (if (close-enuf? old new)
+	new
+	(iter new (f new))))
+  (iter g (f g)))
+
+(define (sqrt-1 x)
+  (fixed-point (average-damp (lambda(y) (/ x y))) 1))
+
+(sqrt-1 4) 
