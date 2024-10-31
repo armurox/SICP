@@ -98,3 +98,18 @@
   (fixed-point (average-damp (lambda(y) (/ x y))) 1))
 
 (sqrt-1 4) 
+
+(define (deriv f)
+  (let ((h 0.00001))
+    (lambda(x)
+      (/ (- (f (+ x h)) (f x)) h))))
+    
+
+(define (newton f g)
+  (fixed-point (lambda(x) (- x (/ (f x) ((deriv f) x)))) g))
+
+(define (sqrt-2 x)
+  (define (square a) (* a a))
+  (newton (lambda(a) (- (square a) x)) 1))
+
+(sqrt-2 16)
