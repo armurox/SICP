@@ -39,7 +39,7 @@
 
 ;; you need to complete this procedure, then show some test cases
 
-(position 0 0 0 0)
+(position 0 0 0 0) ;; -> 0
 (position 0 0 20 0)
 (position 0 5 10 10)
 (position 2 2 2 2) ; -> 10
