@@ -88,7 +88,7 @@
 ;; Tests
 (time-to-impact 0 4) ;; -> 0.903
 (time-to-height 0 4 0) ;; -> 0.903
-(time-to-impact (/ (- 4) (- 4.9)) (/ (- 4) (- 4.9))) ;; -> 0.49987
+(time-to-impact (* (- 4) (- 4.9)) (* (- 4) (- 4.9))) ;; -> 4.83 (approx 4.9, which is correct) 
 ;; Problem 4
 
 ;; once we can solve for t_impact, we can use it to figure out how far the ball went
