@@ -74,15 +74,21 @@
 
 (define time-to-impact
   (lambda (vertical-velocity elevation)
-    YOUR-CODE-HERE))
+    (root1 -4.9 vertical-velocity elevation)
+    ))
 
 ;; Note that if we want to know when the ball drops to a particular height r 
 ;; (for receiver), we have
 
 (define time-to-height
   (lambda (vertical-velocity elevation target-elevation)
-    YOUR-CODE-HERE))
+    (root1 -4.9 vertical-velocity (- elevation target-elevation))
+    ))
 
+;; Tests
+(time-to-impact 0 4) ;; -> 0.903
+(time-to-height 0 4 0) ;; -> 0.903
+(time-to-impact (/ (- 4) (- 4.9)) (/ (- 4) (- 4.9))) ;; -> 0.49987
 ;; Problem 4
 
 ;; once we can solve for t_impact, we can use it to figure out how far the ball went
