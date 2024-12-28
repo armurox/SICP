@@ -100,11 +100,14 @@
 
 (define travel-distance-simple
   (lambda (elevation velocity angle)
-    YOUR-CODE-HERE))
+    (let ((t (time-to-impact (* velocity (sin (degree2radian angle))) elevation)))
+      (* (* velocity (cos (degree2radian angle))) t))
+    ))
 
 ;; let's try this out for some example values.  Note that we are going to 
 ;; do everything in metric units, but for quaint reasons it is easier to think
 ;; about things in English units, so we will need some conversions.
+
 
 (define meters-to-feet
   (lambda (m)
@@ -130,7 +133,8 @@
 
 ;; what is the distance traveled in each case?
 ;; record both in meters and in feet
-
+(travel-distance-simple 1 45 0) ; -> 20.33 meters
+(travel-distance-simple 1 45 90) ; -> 0.00005 (negligible)
 
 ;; Problem 5
 
