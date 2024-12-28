@@ -145,15 +145,29 @@
 ;; assume that angle is between 0 and (/ pi 2) radians or between 0 and 90
 ;; degrees
 
-(define alpha-increment 0.01)
+(define alpha-increment 1)
 
 (define find-best-angle
   (lambda (velocity elevation)
-    YOUR-CODE-HERE))
+    (define (iter angle curr_best best_angle)
+      (let ((current_dist (travel-distance-simple elevation velocity angle)))
+	(cond ((> angle 90) best_angle)
+	      ((> current_dist curr_best) (iter (+ angle alpha-increment) current_dist angle))
+	      (else (iter (+ angle alpha-increment) curr_best best_angle)))))
+    (iter 0 0 0)
+	  
+    ))
 
+(find-best-angle 15 1) ;; -> 44
+(find-best-angle 45 0) ;; -> 45
+(find-best-angle 2 0) ;; -> 45
+(find-best-angle 2 1) ;; -> 22
+ 
 ;; find best angle
 ;; try for other velocities
 ;; try for other heights
+
+;; Conclusion is that generally the optimal angle of hitting is 45 degrees, but when you introduce some elevation, that reduces a bit.
 
 ;; Problem 6
 
