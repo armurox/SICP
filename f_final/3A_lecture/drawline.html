@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Drawing</title>
+</head>
+<body>
+    <h1>Canvas Drawing Example</h1>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Select the canvas element
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Draw lines
+        ctx.beginPath();ctx.moveTo(0,100);ctx.lineTo(150,100);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(0,250);ctx.lineTo(150,250);ctx.stroke();
+    </script>
+</body>
+</html>
