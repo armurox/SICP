@@ -1,5 +1,4 @@
 ;;; Project 1, 6.001, Spring 2005
-
 ;;; idea is to simulate a baseball robot
 
 ;; imagine hitting a ball with an initial velocity of v 
@@ -237,15 +236,27 @@
 (define mass .145)  ; kg
 (define diameter 0.074)  ; m
 (define beta (* .5 drag-coeff density (* 3.14159 .25 (square diameter))))
+(define step 0.01)
 
 (define integrate
   (lambda (x0 y0 u0 v0 dt g m beta)
-    YOUR-CODE-HERE))
+    (define (sos a b) (+ (square a) (square b)))
+    (let ((du (* (/ (* (- 1) beta (sqrt (sos u0 v0))) m) dt u0)) (dv (* (- (* (/ (* (- 1) beta (sqrt (sos u0 v0))) m) v0) g) dt))) 
+    (if (< y0 0)
+	x0
+	(integrate (+ x0 (* u0 dt)) (+ y0 (* v0 dt)) (+ u0 du) (+ v0 dv) dt g m beta)))
+    ))
 
 (define travel-distance
-  YOUR-CODE-HERE)
+  (lambda (elevation velocity angle)
+    (integrate 0 elevation (* velocity (cos (degree2radian angle))) (* velocity (sin (degree2radian angle))) step 9.8 mass beta))
+  )
 
 
+(travel-distance-simple 0 45 45) ; -> 206.6
+(travel-distance 0 45 45) ; -> 91.7
+(travel-distance 0 40 45) ; -> 81.1
+(travel-distance 0 45 40) ; -> 93.1
 ;; RUN SOME TEST CASES
 
 ;; what about Denver?
@@ -268,3 +279,4 @@
 ;; Problem 8
 
 ;; Problem 9
+
