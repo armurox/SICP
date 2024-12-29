@@ -100,5 +100,5 @@
 		(drawline ((coord-map rect) (seg-start s)) ((coord-map rect) (seg-end s))))
 	      seglist)))
 
-(define p1 ((make-picture (list (make-segment (make-vec 0 0) (make-vec 1 0)) (make-segment (make-vec 0 1) (make-vec 1 1))))
-	    rect-2))
+(define p1 (make-picture (list (make-segment (make-vec 0 0) (make-vec 1 0)) (make-segment (make-vec 0 1) (make-vec 1 1)))))
+(p1 rect-2)
