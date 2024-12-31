@@ -75,7 +75,7 @@
   )
 
 (define rect-1 (make-rect (make-vec 0 0) (make-vec 2 2) (make-vec 2 2)))
-(define rect-2 (make-rect (make-vec 0 100) (make-vec 150 0) (make-vec 0 150)))
+(define rect-2 (make-rect (make-vec 0 0) (make-vec 150 0) (make-vec 0 150)))
 
 ((coord-map rect-1) (make-vec 1 1)) ;; -> (4 . 4)
 ((coord-map rect-1) (make-vec 1 0)) ;; -> (2 . 2)
@@ -102,3 +102,32 @@
 
 (define p1 (make-picture (list (make-segment (make-vec 0 0) (make-vec 1 0)) (make-segment (make-vec 0 1) (make-vec 1 1)))))
 (p1 rect-2)
+
+(define (flip pic)
+  (lambda(rec)
+    (pic (make-rect (+vec (origin rec) (horiz rec)) (scale -1 (horiz rec)) (vert rec)))))
+
+(define p2 (make-picture (list (make-segment (make-vec 0 0) (make-vec 1 0)) (make-segment (make-vec 0 1) (make-vec 1 1))
+			       (make-segment (make-vec 0 0) (make-vec 1 1)))))
+
+(p2 rect-2)
+(define p3 (flip p2))
+
+(p3 rect-2)
+
+(define (beside pic-1 pic-2 a)
+  (lambda(rect)
+    (pic-1 (make-rect (origin rect) (scale a (horiz rect)) (vert rect)))
+    (pic-2 (make-rect (+vec (origin rect) (scale a (horiz rect))) (scale (- 1 a) (horiz rect)) (vert rect)))))
+
+(define p4 (beside p3 p2 0.5))
+(p4 rect-2)
+
+(define (right-push pic-1 a n)
+  (if (< n 2)
+      pic-1
+      (beside pic-1 (right-push pic-1 a (- n 1)) a)))
+
+(define p5 (right-push p4 0.5 4))
+
+(p5 rect-2)
