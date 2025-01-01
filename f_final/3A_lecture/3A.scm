@@ -131,3 +131,20 @@
 (define p5 (right-push p4 0.5 4))
 
 (p5 rect-2)
+
+(define (repeated f n)
+  (if (< n 2)
+      f
+      (lambda(x) (f ((repeated f (- n 1)) x)))))
+
+((repeated square 2) 2) ;; -> 16
+
+(define (push comb)
+  (lambda(pic a n)
+    ((repeated (lambda(p) (comb pic p a)) n) pic)))
+
+(define right-push (push beside))
+
+(define p6 (right-push p4 0.5 4))
+
+(p6 rect-2)
