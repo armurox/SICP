@@ -276,6 +276,32 @@
 ;; try out some times for distances (30, 60, 90 m) or (100, 200, 300 ft) 
 ;; using 45m/s
 
+(define time-integrate
+  (lambda (x0 y0 u0 v0 dt g m beta t-total)
+    (define (sos a b) (+ (square a) (square b)))
+    (let ((du (* (/ (* (- 1) beta (sqrt (sos u0 v0))) m) dt u0)) (dv (* (- (* (/ (* (- 1) beta (sqrt (sos u0 v0))) m) v0) g) dt))) 
+    (if (< y0 0)
+	(cons x0 t-total)
+	(time-integrate (+ x0 (* u0 dt)) (+ y0 (* v0 dt)) (+ u0 du) (+ v0 dv) dt g m beta (+ t-total dt))))
+    ))
+
+(define time cdr)
+(define distance car)
+
+(define find-best-angle-given-desired-distance
+  (lambda (elevation velocity target-distance)
+    (define (try angle best-angle min-time)
+      (let ((curr-time (time (time-integrate 0 elevation (* velocity (cos (degree2radian angle))) (* velocity (sin (degree2radian angle))) step 9.8 mass beta 0))) (curr-distance (distance (time-integrate 0 elevation (* velocity (cos (degree2radian angle))) (* velocity (sin (degree2radian angle))) step 9.8 mass beta 0))) )
+	(cond ((= angle 90) best-angle)
+	      ((and (< curr-time min-time) (or (> curr-distance target-distance) (= curr-distance target-distance))) (try angle angle curr-time))
+	      (else
+	       (try (1+ angle) best-angle min-time)
+	    
+	       ))))
+    (try (- 90) 0 90000)))
+
+(find-best-angle-given-desired-distance 0 45 90) ;; -> 31
+
 ;; Problem 8
 
 ;; Problem 9
