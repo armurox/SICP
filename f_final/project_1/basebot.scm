@@ -304,5 +304,23 @@
 
 ;; Problem 8
 
+(define integrate-with-bounce
+  (lambda (x0 y0 u0 v0 dt g m beta num-bounces initial-u0 initial-v0)
+    (define (sos a b) (+ (square a) (square b)))
+    (let ((du (* (/ (* (- 1) beta (sqrt (sos u0 v0))) m) dt u0)) (dv (* (- (* (/ (* (- 1) beta (sqrt (sos u0 v0))) m) v0) g) dt))) 
+    (cond ((and (< y0 0) (< num-bounces 1))
+	   x0)
+	  ((< y0 0) (integrate-with-bounce x0 0 (/ initial-u0 2) (/ initial-v0 2) dt g m beta (- num-bounces 1) (/ initial-u0 2) (/ initial-v0 2)))  
+	(else (integrate-with-bounce (+ x0 (* u0 dt)) (+ y0 (* v0 dt)) (+ u0 du) (+ v0 dv) dt g m beta num-bounces initial-u0 initial-v0))))
+    ))
+
+(define travel-distance-with-bounce
+  (lambda (elevation velocity angle num-bounces)
+    (integrate-with-bounce 0 elevation (* velocity (cos (degree2radian angle))) (* velocity (sin (degree2radian angle))) step 9.8 mass beta num-bounces (* velocity (cos (degree2radian angle))) (* velocity (sin (degree2radian angle)))))
+  )
+
+(travel-distance-with-bounce 0 45 45 0) ;; -> 91.7
+(travel-distance-with-bounce 0 45 45 1) ;; -> 130.1
+(travel-distance-with-bounce 0 45 45 2) ;; -> 142.0
 ;; Problem 9
 
