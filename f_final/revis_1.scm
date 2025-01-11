@@ -70,4 +70,43 @@
 (sqrt 2) ;; -> 1.414
 
 
+(define (atom? e) (and (not (null? e)) (not (pair? e))))
+(define (deriv exp var)
+  (define (cons? e) (and (atom? e) (not (eq? e var))))
+  (define (var? e) (and (atom? e) (eq? e var)))
+  (define s1 cadr)
+  (define p1 cadr)
+  (define s2 caddr)
+  (define p2 caddr)
+  (define (sum? e) (eq? '+ (car e)))
+  (define (prod? e) (eq? '* (car e)))
+  (define (make-sum a b)
+    (cond ((and (number? a) (number? b)) (+ a b))
+	  ((eq? a '0) b)
+	  ((eq? b '0) a)
+	  ((eq? a b) (list '* 2 a))
+	  (else (list '+ a b))))
+    (define (make-prod a b)
+      (cond ((number? a) (number? b) (* a b))
+	    ((eq? a '1) b)
+	    ((eq? b '1) a)
+	    ((eq? a '0) 0)
+	    ((eq? b '0) 0)
+	    ((eq? a b) (list '^ a 2))
+	     (else (list '* a b))))
+  (define (make-pow a p) (list '^ a p))
+  (cond ((cons? exp) 0)
+	((var? exp) 1)
+	((sum? exp) (make-sum (deriv (s1 exp) var) (deriv (s2 exp) var)))
+	((prod? exp) (make-sum (make-prod (p1 exp) (deriv (p2 exp) var)) (make-prod (p2 exp) (deriv (p1 exp) var))))))
 
+(deriv '(+ (* x x) (+ (* b x) c)) 'x) ;; -> (+ (* 2 x) b)
+
+(define (fib n)
+  (define (iter old new count)
+    (if (> count n)
+	old
+	(iter new (+ old new) (1+ count))))
+  (iter 0 1 1))
+
+(fib 5) ;; -> 5
