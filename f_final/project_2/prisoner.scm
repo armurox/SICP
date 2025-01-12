@@ -123,6 +123,11 @@
 (define a-play (make-play "c" "c"))
 (extract-entry a-play *game-association-list*) ;; -> (("c" "c") (3 3))
 
+(play-loop patsy patsy) ;; -> (3, 3)
+(play-loop patsy nasty) ;; -> (0, 5)
+(play-loop nasty patsy) ;; -> (5, 0)
+(play-loop patsy eye-for-eye) ;; -> (3, 3)
+(play-loop nasty eye-for-eye) ;;-> (1.037, 0.991)
 
 
        
