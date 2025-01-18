@@ -72,7 +72,44 @@
 (match '((? v)) '((dd a) b) '()) ;; -> fail
 (match '((? v) (? c)) '((dd a) b) '()) ;; -> (((c) . b) ((v) dd a))
 
-;;Instantiator
 
-	     
-      
+;; Possible implementations of skeleton-evaluation?, eval-exp and evaluate until more detail is given
+(define (skeleton-evaluation? s)
+  (equal? (car s) ':))
+
+(define (eval-exp s)
+  (cdr s))
+
+(define (evaluate a dict)
+  (define (loop d)
+    (cond ((null? d) #f)
+	((equal? (car d) (car a)) (cdr d))
+	(else
+	 (let ((eval-result (loop (car d))))
+	   (if eval-result
+	       eval-result
+	       (loop (cdr d))
+	     )))))
+  (loop dict))
+
+;;Instantiator
+(define (instantiate skeleton dict)
+  (define (loop s)
+    (cond ((null? s) s)
+          ((atom? s) s)
+	  ((skeleton-evaluation? s) (evaluate (eval-exp s) dict))
+	  (else
+	   (cons (loop (car s)) (loop (cdr s))))))
+  (loop skeleton))
+
+
+(instantiate '((: x) = (: x)) (cons (cons 'x 1) '())) ;; -> (1 = 1)
+(instantiate '(foo (: x) = (: x)) (cons (cons 'x 1) '())) ;; -> (foo 1 = 1)
+
+;; True-eval (will be explained later)
+(define (true-evaluate form dict)
+  (if (atom? form)
+      (lookup form dict) ;; Essentially the evaluate I wrote above, I guess
+      (apply
+       (eval (lookup (car form) dict) user-initial-environment)
+       (mapcar (lambda(x) (lookup v dict)) (cdr form)))))
