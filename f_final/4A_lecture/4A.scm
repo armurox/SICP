@@ -1,4 +1,4 @@
-(define deriv-rulesA
+(define deriv-rules
   '(
     ((dd (?c c) (? v)) 0)
     ((dd (?v v) (? v)) 1)
@@ -9,8 +9,8 @@
     ))
 
 ;; Goal
-(define d-simp
-  (simplifier deriv-rules))
+;;(define d-simp
+  ;;(simplifier deriv-rules))
 
 
 (define (atom? a)
@@ -19,7 +19,7 @@
 ;; One possible implementation of extend-dict (assuming a dict comes as either `fail or a list of pairs )
 (define (in? a b)
   (cond ((null? b) #f)
-	((equal? a (car v)) #t)
+	((equal? a (car b)) #t)
 	(else
 	 (in? a (cdr b)))))
 
@@ -32,23 +32,34 @@
 
 ;; Matcher
 (define (match p e dict)
-  (cond ((equal? dict `fail) `fail)
+  (define (arbitrary-constant? pattern)
+    (equal? (car pattern) '?c))
+  (define (arbitrary-variable pattern)
+    (equal? (car pattern) '?v))
+  (define (arbitrary-expression? pattern)
+    (equal? (car pattern) '?))
+  (define constant? atom?)
+  (define variable atom?)
+  (cond ((equal? dict 'fail) 'fail)
+	((or (and (null? p) (not (null? e))) (and (null? e) (not (null? p)))) 'fail)
+	((and (null? p) (null? e)) dict)
 	((atom? p)
 	 (if (atom? e)
 	     (if (equal? p e)
 		 dict
-		 `fail)
-	     `fail))
+		 'fail)
+	     'fail))
 	((arbitrary-constant? p)
 	 (if (constant? e)
 	     (extend-dict p e dict)
-	     `fail))
+	     'fail))
 	((arbitrary-variable p)
 	 (if (variable? e)
 	     (extend-dict p e dict)
-	     `fail))
+	     'fail))
 	((arbitrary-expression? p)
 	 (extend-dict p e dict))
+	((atom? e) 'fail)
 	(else
 	 (match
 	   (cdr p)
@@ -57,7 +68,11 @@
 	     (car p)
 	     (car e)
 	     dict)))))
-	     
-	   
+
+(match '((? v)) '((dd a) b) '()) ;; -> fail
+(match '((? v) (? c)) '((dd a) b) '()) ;; -> (((c) . b) ((v) dd a))
+
+;;Instantiator
+
 	     
       
