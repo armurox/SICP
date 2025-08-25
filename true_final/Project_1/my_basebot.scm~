@@ -1,0 +1,12 @@
+(define (position a v u t)
+  (+ u (* v t) (* 0.5 a (* t t))))
+
+(position 0 0 0 0)
+
+(position 0 0 20 0)
+
+(position 0 5 10 10)
+
+(position 2 2 2 2) ;; -> 10
+
+(position 5 5 5 5) ;; -> 92.5

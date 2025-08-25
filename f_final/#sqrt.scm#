@@ -1,0 +1,65 @@
+(define (square a)
+  (* a a))
+
+(define (abs a)
+  (if (< a 0)
+      (- a)
+      a))
+
+(define (avg a b)
+  (/ (+ a b) 2))
+
+(define (sqrt x)
+  (define (good-enough? guess)
+    (< (abs (- (square guess) x)) 0.00001))
+  (define (improve guess)
+    (avg guess (/ x guess)))
+  (define (try guess)
+    (if (good-enough? guess)
+	guess
+	(try (improve guess))))
+  (try 1))
+
+(sqrt 1)
+(sqrt 4)
+(sqrt 2)
+
+(define (fixed-point f)
+  (lambda(g)
+    (let ((min_diff 0.00001))
+      (define (good-enough? a b)
+	(< (abs (- a b)) min_diff))
+      (define (iter old new)
+	(if (good-enough? old new)
+	    new
+	    (iter new (f new))))
+      (iter g (f g)))))
+
+(define (sqrt x)
+  ((fixed-point (lambda(guess) (avg guess (/ x guess)))) 1))
+
+(sqrt 2)
+
+(define (sqrt x)
+  (define (average-damp f)
+    (lambda(a)
+      (avg a (f a))))
+  ((fixed-point (lambda(guess) ((average-damp (lambda(g) (/ x g))) guess))) 1))
+
+(sqrt 4)
+
+(define (newton f)
+  (define (deriv func)
+    (lambda(x)
+      (let ((h 0.00001))
+	(/ (- (func (+ x h) (func x))) h))))
+  (let ((df (deriv f)))
+    (fixed-point (lambda(x)
+		   (- x (/ (f x) (df x))))
+		 )))
+((newton (lambda(y) (- square y) 4)) 1)
+(define (sqrt x)
+  ((newton (lambda(y) (- (square y) x))) 1))
+
+(sqrt 4)
+    
