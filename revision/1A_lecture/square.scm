@@ -1,0 +1,30 @@
+(define square
+  (lambda (x) (* x x)))
+
+(square 3)
+
+(define (avg a b)
+  (/ (+ a b) 2))
+
+(define (improve x g)
+  (if (< (abs (- g (avg (/ x g) g))) 0.001)
+      g
+      (improve x (avg (/ x g) g))))
+      
+
+(define (sqrt x)
+  (improve x 1))
+
+(sqrt 4)
+
+(define (fixed-f func guess)
+  (if (< (abs(- guess (func guess))) 0.001)
+      guess
+      (fixed-f func (func guess))))
+
+;; Square root definition with fixed-point
+(define (sqrt_1 x)
+  (fixed-f (lambda (g) (avg g (/ x g))) 1))
+
+(sqrt_1 4)
+

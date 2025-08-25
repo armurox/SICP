@@ -1,0 +1,73 @@
+(define (sum a b)
+  (define (helper-sum i s)
+    (if (> i b)
+	s
+	(helper-sum (1+ i) (+ i s))))
+  (helper-sum a 0))
+
+(sum 10 11)
+
+(define (sum-int a b)
+  (if (> a b)
+      0
+      (+ a (sum-int (1+ a) b))))
+
+(sum-int 10 11)
+(define (sum-sq a b)
+  (if (> a b)
+      0
+      (+ (* a a) (sum-sq (1+ a) b))))
+
+(sum-sq 1 4)
+
+(define (pi-sum a b)
+  (if (> a b)
+      0
+      (+ (/ 1 (* a (+ a 2)))
+	 (pi-sum (+ a 4) b))))
+
+(* 8 (pi-sum 1 8))
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+
+(sum square 10 1+ 11)
+      
+(sum (lambda (i) (* i i)) 10 (lambda (i) (+ i 1)) 11)
+
+(define (sum-int a b)
+  (sum (lambda (i) i) a 1+ b))
+
+(sum-int 1 3)
+
+(define (sum term a next b)
+  (define (iter j ans)
+    (if (> j b)
+	ans
+	(iter (next j)
+	      (+ (term j) ans))))
+  (iter a 0))
+
+(sum square 10 1+ 11)
+
+(define (fib n)
+  (define (helper a b s)
+    (if (= s n)
+	b
+	(helper (+ a b) a (1+ s))))
+  (helper 1 0 0))
+
+(fib 6)
+
+(define (sqrt x)
+  (define (fixed-point f g)
+    (if (< (abs (- g (f g))) 0.0001)
+	(f g)
+	(fixed-point f (f g))))
+  (define (avg a b)
+    (/ (+ a b) 2))
+  (fixed-point (lambda (y) (avg y (/ x y))) 1))
+
+(sqrt 4)
