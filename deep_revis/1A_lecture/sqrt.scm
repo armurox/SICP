@@ -80,3 +80,31 @@
 
 (sqrt 4)
 
+;; Now, we will build up to the Newton-Rhapson Method of computing square roots.
+;; The rough formulation involves two parts, first, the actual Newton-Rhapson method applies to roots of a function in general
+;; It states that to find a root x, we start with some guess x_0 and repeatedly apply x_(n+1) = x_n - f(x_n) / f'(x_n) starting with n = 0
+
+;; Now, the idea of repetedly applying until we get some guess is remniscent of fixed-points, so we now need to simply construct the actual function
+;; To do that, we need one preliminary, which is the actual function for computing a derivitive, which I will demonstrate below
+
+;; The idea is quite simple, we will approximate the derivitive with its definition of lim h -> 0(f(x + h) - f(x)) / h
+;; And to approximate the idea of the limit, we simply let h be a very small constant
+(define (deriv f)
+  (lambda(x)
+    (let ((h 0.00001))
+      (/ (- (f (+ x h)) (f x)) h))))
+
+
+
+;; Now, on to the newton rhapson method, this should be a procedure that takes in a function, and computes it root.
+;; Then, the final definition of a square root is simply the function, where, if we assume we are computing the square root of y, then it is  f(y) = y^2 - x.
+(define (newton f)
+  (fixed-point
+   (let ((df (deriv f)))
+     (lambda(x)
+       (- x (/ (f x) (df x)))))))
+
+(define (sqrt x)
+  ((newton (lambda(y) (- (square y) x))) x))
+
+(sqrt 2)
