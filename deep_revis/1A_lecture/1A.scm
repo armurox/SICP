@@ -75,3 +75,22 @@ B ;; -> 150
 (abs 8) ;; -> 8
 
 
+
+;; Lets do another definition of square root, but this time without using block structure, so it is clear
+
+(define (sqrt x)
+  (try 1 x))
+
+(define (try guess x)
+  (if (good-enough? guess x)
+      guess
+      (try (improve guess x) x)))
+
+(define (good-enough? guess x)
+  (< (abs (- (square guess) x)) 0.00001))
+
+(define (improve guess x)
+  (average guess (/ x guess)))
+
+(sqrt 1) ;; -> 1
+(sqrt 4)
