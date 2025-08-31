@@ -99,11 +99,16 @@
 
 (define travel-distance-simple
   (lambda (elevation velocity angle)
-    YOUR-CODE-HERE))
+    (let ((vertical-velocity (* velocity (sin (degree2radian angle))))
+	  (horizontal-velocity (* velocity (cos (degree2radian angle)))))
+      (* horizontal-velocity (time-to-impact vertical-velocity elevation)))))
 
 ;; let's try this out for some example values.  Note that we are going to 
 ;; do everything in metric units, but for quaint reasons it is easier to think
 ;; about things in English units, so we will need some conversions.
+(travel-distance-simple 1 45 0) ;; -> 20.33
+(travel-distance-simple 1 45 45) ;; -> 207.63
+(travel-distance-simple 1 45 90) ;; -> (effectively zero, comes out as 0.0005)
 
 (define meters-to-feet
   (lambda (m)
