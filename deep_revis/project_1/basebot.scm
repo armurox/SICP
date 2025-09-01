@@ -149,11 +149,24 @@
 
 (define find-best-angle
   (lambda (velocity elevation)
-    YOUR-CODE-HERE))
+    (define (iter max-distance best-angle curr-angle)
+      (let ((curr-distance (travel-distance-simple elevation velocity curr-angle)))
+	(cond ((> curr-angle 90) best-angle)
+	      ((> curr-distance max-distance) (iter curr-distance curr-angle (1+ curr-angle)))
+	      (else
+	       (iter max-distance best-angle (1+ curr-angle))))))
+    (iter (travel-distance-simple elevation velocity 0) 0 1)))
+
+	    
+	  
 
 ;; find best angle
 ;; try for other velocities
 ;; try for other heights
+(find-best-angle 45 1) ;; -> 45
+(find-best-angle 45 4) ;; -> 44
+(find-best-angle 45 0) ;; -> 45
+(find-best-angle 45 45) ;; -> 40
 
 ;; Problem 6
 
