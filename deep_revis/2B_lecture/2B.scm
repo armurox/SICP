@@ -53,3 +53,48 @@
 
 (let ((a 2))
   (* a a)) ;; -> 4
+
+;; Let's apply our knowledge now of connecting pairs to constructing vectors, and building up to computing the distance of a line
+(define make-vector cons)
+(define xcoord car)
+(define ycoord cdr)
+
+
+;; Note that a line is made up of two points
+(define make-line cons)
+(define first-point car)
+(define second-point cdr)
+
+;; Now, we can define a method for computing Euclidean distance, assuming we get a line as input
+(define (distance l)
+  (let ((x1 (xcoord (first-point l)))
+	(x2 (xcoord (second-point l)))
+	(y1 (ycoord (first-point l)))
+	(y2 (ycoord (second-point l))))
+    (sqrt (+ (square (- x2 x1)) (square (- y2 y1))))))
+
+;; We can also compute the midpoint of a line segment, for which we will also define an average procedure first
+(define (average a b)
+  (/ (+ a b) 2))
+
+(define (midpoint l)
+  (let ((x1 (xcoord (first-point l)))
+	(x2 (xcoord (second-point l)))
+	(y1 (ycoord (first-point l)))
+	(y2 (ycoord (second-point l))))
+    (make-vector (average x1 x2) (average y1 y2))))
+
+;; Now lets use the above definitions to construct a line
+(define p1 (make-vector 1 2))
+(define p2 (make-vector 4 6))
+(define l1 (make-line p_1 p_2))
+
+(distance l1) ;; -> 5
+(midpoint l1) ;; -> (5/2 . 4)
+
+
+
+
+
+
+
