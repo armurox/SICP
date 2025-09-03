@@ -94,7 +94,21 @@
 
 
 
+;; Lets now start to blur the lines between data and procedures, looking at possible implementation of cons, car and cdr
+(define (cons a b)
+  (lambda(pick)
+    (if (= pick 1)
+	a
+	b)))
 
+(define (car x)
+  (x 1))
 
+(define (cdr x)
+  (x 2))
 
+(define m (cons 1 2)) ;; -> m, i.e. simple creation of a variable
+(car m) ;; -> 1
+(cdr m) ;; -> 2
 
+;; In other words, the above implementations satisfy the basic contract for a pair with cons, car and cdr implemented, but cons is simply a procedure that selects the data, i.e., the data itself is being constructed from a procedure.
